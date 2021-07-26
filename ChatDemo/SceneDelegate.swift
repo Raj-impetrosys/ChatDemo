@@ -6,17 +6,49 @@
 //
 
 import UIKit
+import StreamChat
+import StreamChatUI
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
 
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
+//    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+//        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
+//        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
+//        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
+//        guard let _ = (scene as? UIWindowScene) else { return }
+//    }
+    
+    func scene(
+        _ scene: UIScene,
+        willConnectTo session: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions
+    ) {
+        Components.default.messageListVC = MessageList.self
+        let config = ChatClientConfig(apiKey: .init("b67pax5b2wdq"))
+        let token =
+            Token(
+                stringLiteral: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidHV0b3JpYWwtZHJvaWQifQ.NhEr0hP9W9nwqV7ZkdShxvi02C5PR7SJE7Cs4y7kyqg"
+            )
+
+        /// create an instance of ChatClient and share it using the singleton
+        ChatClient.shared = ChatClient(config: config)
+
+        /// connect to chat
+        ChatClient.shared.connectUser(
+            userInfo: UserInfo(
+                id: "tutorial-droid",
+                name: "Tutorial Droid",
+                imageURL: URL(string: "https://bit.ly/2TIt8NR")
+            ),
+            token: token
+        )
+        
+        Appearance.default.colorPalette.background6 = .green
+            Appearance.default.images.sendArrow = UIImage(systemName: "arrowshape.turn.up.right")!
+        Components.default.attachmentViewCatalog = MyAttachmentViewCatalog.self
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
